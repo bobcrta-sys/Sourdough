@@ -87,7 +87,7 @@ ol.steps li::before{content:counter(s);font-weight:800;font-size:20px;color:var(
 .mine b{display:block;margin-bottom:2px}
 .alt{background:var(--card);border-radius:14px;padding:16px 18px;margin-top:22px}.alt h3{margin-bottom:6px}.alt ul{margin:0;padding-left:20px}
 .src{font-size:14px;color:var(--soft);margin-top:18px}.src a,.help a{color:var(--blue)}
-.search{width:100%;max-width:640px;font:16px inherit;font-family:inherit;padding:14px 16px;border:2px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);min-height:48px;margin-bottom:6px}.search:focus{outline:3px solid var(--blue);outline-offset:2px}.cat{font-weight:800;font-size:18px;margin:26px 0 10px}#help .cat:first-child{margin-top:8px}.help{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px}
+.search{width:100%;max-width:640px;font:16px inherit;font-family:inherit;padding:14px 16px;border:2px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);min-height:48px;margin-bottom:6px}.search:focus{outline:3px solid var(--blue);outline-offset:2px}.cat{font-weight:800;font-size:18px;margin:26px 0 10px}#help .cat:first-child{margin-top:8px}.hero-photo{margin:0 0 20px}.hero-photo img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:16px;display:block;background:var(--card)}figcaption{font-size:14px;color:var(--soft);margin-top:6px}.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:14px;margin-top:24px}.gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;display:block;background:var(--card)}.qa-photo{margin:0 0 14px}.qa-photo img{width:100%;max-width:360px;border-radius:12px;display:block}.help{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px}
 .help details{background:var(--card);border-radius:14px;padding:4px 18px;border:1px solid var(--line)}
 .help summary{font-weight:800;font-size:17px;cursor:pointer;padding:14px 0;list-style-position:outside}
 .help details p{margin:0 0 14px}
@@ -162,6 +162,9 @@ ol.steps li::before{content:counter(s);font-weight:800;font-size:20px;color:var(
 
 <script>
 {
+const PHOTOS={"bagels": "photos/bagels.jpg", "sandwich": "photos/sandwich.jpg", "crumb": "photos/crumb.jpg", "spiral": "photos/spiral.jpg", "turkeys": "photos/turkeys.jpg", "bagels-mix": "photos/bagels-mix.jpg", "bloom": "photos/bloom.jpg", "focaccia": "photos/focaccia.jpg", "ear": "photos/ear.jpg"};
+const CAP={spiral:'Proofed in a basket, which leaves the spiral.',crumb:'The crumb to aim for. Let it cool before slicing.',ear:'One confident score at a shallow angle opens into an ear.',bloom:'A single deep score lets the loaf bloom.',turkeys:'Same idea, shaped as turkeys for Thanksgiving.',sandwich:'A batch of sandwich loaves.',bagels:'Everything bagels.','bagels-mix':'Plain and everything bagels cooling on the rack.',focaccia:'Focaccia with onions and rosemary, and the open crumb inside.'};
+const pic=(k,cls,cap=1)=>PHOTOS[k]?`<figure class="${cls}"><img src="${PHOTOS[k]}" alt="${esc(CAP[k]||'')}" loading="lazy">${cap?`<figcaption>${esc(CAP[k]||'')}</figcaption>`:''}</figure>`:'';
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const store={get(k,d){try{const v=localStorage.getItem('sd-'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('sd-'+k,JSON.stringify(v))}catch(e){}}};
@@ -200,7 +203,7 @@ const R=[
   "Not baking for a while? Feed it, let it sit an hour, then put it in the fridge.",
   "Before baking again, give it 2–3 feedings at room temperature to wake it up."]]],
  mine:"If it ever gets pink, orange or fuzzy spots, throw it out and text me. I'll give you more.",card:1},
-{id:'country',tab:'Bread (2 loaves)',title:'My two-loaf sourdough',sub:'Mix one day, cold proof overnight, bake the next.',
+{id:'country',tab:'Bread (2 loaves)',hero:'spiral',gallery:['crumb','ear','bloom','turkeys'],title:'My two-loaf sourdough',sub:'Mix one day, cold proof overnight, bake the next.',
  scale:{n:2,base:2,min:1,max:12,unit:'loaves'},
  ing:k=>[{h:'Ingredients',items:[['Active starter',250*k],['Water',735*k],['Bread flour (unbleached)',1000*k],['Sea salt',24*k]]}],
  ingNote:'Always use unbleached bread flour. The starter should be active: at its peak or just starting to fall.',
@@ -224,7 +227,7 @@ const R=[
   {s:"Bake covered at 450–500°F for about 25 minutes.",t:25},
   {s:"Remove the lid and bake another 5–10 minutes, until deep golden brown.",t:8},
   "Cool on a rack before slicing. Enjoy!"]]]},
-{id:'sandwich',tab:'Sandwich loaf',title:'Soft enriched sandwich bread',sub:'Same-day loaf: about 5 hours from mixing to baking.',
+{id:'sandwich',tab:'Sandwich loaf',hero:'sandwich',title:'Soft enriched sandwich bread',sub:'Same-day loaf: about 5 hours from mixing to baking.',
  scale:{n:1,base:1,min:1,max:8,unit:'loaves'},
  ing:k=>[{h:'Levain (feed 4–10 hours ahead)',items:[['Sourdough starter',31*k],['Water',62*k],['Bread flour',31*k],['Whole wheat flour',31*k]]},
   {h:'Dough',items:[['Warm milk (98°F)',115*k],['Warm water (98°F)',200*k],['Melted unsalted butter',20*k],['Salt',12*k],['Maple syrup',18*k],['Peaked starter (the levain)',135*k],['Bread flour',500*k]]}],
@@ -247,7 +250,7 @@ const R=[
   {s:"Cool on a wire rack for 1 hour before slicing.",t:60}]]],
  mine:"I bake it until the inside reads 195°F. Don't go by the clock alone.",
  src:['Rosehill Sourdough’s enriched sandwich bread','https://rosehillsourdough.com/recipes/enriched-sandwich-bread/']},
-{id:'focaccia',tab:'Focaccia',title:'Overnight focaccia',sub:'About 4 hours of folds, an overnight rest in the pan, then bake.',
+{id:'focaccia',tab:'Focaccia',hero:'focaccia',title:'Overnight focaccia',sub:'About 4 hours of folds, an overnight rest in the pan, then bake.',
  pans:[['9×13" thin',150,6,6,30,188],['8" round thick',234,9,9,47,292],['9" round thick / 13×18" thin',297,11,11,59,371],['8×10" thick',372,14,14,74,465],['10×14" thick',653,25,25,131,817]],pan:2,
  scale:{n:1,base:1,min:1,max:8,unit:'pans'},
  ing(n){const [,w,sa,o,st,fl]=this.pans[this.pan],k=(st*n+20)/80;return[{h:'Levain (feed 4–10 hours ahead)',items:[['Sourdough starter',16*k],['Water',32*k],['Bread flour',16*k],['Whole wheat flour',16*k]]},
@@ -272,7 +275,7 @@ const R=[
   "After the last coil fold, put it back in the bowl, cover, and refrigerate overnight or up to 2 days.",
   "To bake, move it into the oiled pan and let it rest covered at least 1 hour, up to about 8, until bubbly.","Don't cold-proof in the pan. It sticks more."]],
  src:['Rosehill Sourdough’s focaccia','https://rosehillsourdough.com/recipes/focaccia/']},
-{id:'bagels',tab:'Bagels',title:'Overnight sourdough bagels',sub:'Mix and fold one day, shape, boil and bake the next.',
+{id:'bagels',tab:'Bagels',hero:'bagels',gallery:['bagels-mix'],title:'Overnight sourdough bagels',sub:'Mix and fold one day, shape, boil and bake the next.',
  scale:{n:8,base:8,min:2,max:24,unit:'bagels'},
  ing:k=>[{h:'Dough',items:[['Warm water',323*k],['Salt',14*k],['Peaked sourdough starter',67*k],['Bread flour',557*k]]},
   {h:'Boil + bake',items:[['Baking soda (for the boiling water)','a spoonful'],['Egg wash','optional'],['Toppings','to taste']]}],
@@ -331,12 +334,12 @@ const help=[
  ["Dough","Can I bake the two-loaf bread the same day?","My method proofs in the fridge overnight. You can let the shaped loaves proof on the counter until puffy instead, usually a few hours, then bake. The flavour will be milder.","same day no fridge skip overnight"],
  ["Dough","Can I make one loaf instead of two?","Yes. On the Bread tab, use the − button to scale to 1 loaf and the amounts halve.","half recipe one loaf scale"],
  ["Shaping + proofing","Why shape twice?","The second shape after a 20-minute rest builds more tension, so the loaf holds its shape and rises up, not out. The dough is less sticky the second time.","shape tension twice preshape"],
- ["Shaping + proofing","I don't have proofing baskets","A bowl lined with a well-floured kitchen towel works. Rice flour helps stop sticking.","banneton basket bowl towel"],
+ ["Shaping + proofing","I don't have proofing baskets","A bowl lined with a well-floured kitchen towel works. Rice flour helps stop sticking.","banneton basket bowl towel",0,"spiral"],
  ["Shaping + proofing","Dough sticks to the basket","Flour the basket well, rice flour is best, and make sure the dough is covered in the fridge so it doesn't dry out and glue itself down.","stuck stick basket flour"],
  ["Shaping + proofing","How long can it stay in the fridge?","I bake the next day. Most dough is fine for 12–24 hours; much longer and it can over-proof and taste very sour.","fridge overnight how long cold proof"],
  ["Baking","My loaf came out flat","Usually a weak starter or the dough was under- or over-proofed. Bake with the starter at peak, make sure the dough really doubled during bulk, and build plenty of tension when shaping.","flat spread pancake no rise"],
  ["Baking","The inside is gummy","Let it cool fully on a rack before slicing. Cutting hot bread squashes the crumb. It can also mean it needed a few more minutes in the oven.","gummy wet dense crumb undercooked"],
- ["Baking","How do I score it?","Use a razor blade or very sharp knife and make one confident cut about ¼ inch deep, at a shallow angle. Do it right after flipping the cold dough onto parchment.","score slash cut lame blade"],
+ ["Baking","How do I score it?","Use a razor blade or very sharp knife and make one confident cut about ¼ inch deep, at a shallow angle. Do it right after flipping the cold dough onto parchment.","score slash cut lame blade",0,"ear"],
  ["Baking","No Dutch oven?","Bake on a hot baking sheet or stone and put a pan of boiling water on a lower rack for the first 20 minutes to make steam.","dutch oven pot cast iron no pot steam"],
  ["Baking","Crust is too dark or burnt on the bottom","Bake at the lower end, 450°F, and put a baking sheet on the rack below the pot to shield the bottom.","burnt dark bottom crust"],
  ["Baking","How do I know it's done?","A deep golden brown crust and a hollow sound when you tap the bottom. For the sandwich loaf, I go by 195°F inside.","done internal temperature thermometer"],
@@ -365,10 +368,11 @@ panels.innerHTML=R.map(r=>{let i=0;return `<section class="panel" id="p-${r.id}"
   ${r.scale?`<div class="scale"><button type="button" data-sc="${r.id}" data-d="-1" aria-label="Fewer">−</button><output id="n-${r.id}"></output><button type="button" data-sc="${r.id}" data-d="1" aria-label="More">+</button><span>${r.scale.unit}</span></div>`:''}
   ${r.pans?`<div class="pans" id="pans-${r.id}" role="group" aria-label="Pan size"></div>`:''}
   <div id="ing-${r.id}"></div><p>${esc(r.ingNote)}</p></div>
- <div><div class="steps-wrap" id="st-${r.id}">${r.phases.map(([p,l])=>`<p class="phase">${esc(p)}</p><ol class="steps">${l.map(s=>stepHTML(s,r.id,i++)).join('')}</ol>`).join('')}</div>
+ <div>${r.hero?pic(r.hero,'hero-photo'):''}<div class="steps-wrap" id="st-${r.id}">${r.phases.map(([p,l])=>`<p class="phase">${esc(p)}</p><ol class="steps">${l.map(s=>stepHTML(s,r.id,i++)).join('')}</ol>`).join('')}</div>
   ${r.mine?`<div class="mine"><b>My note</b>${esc(r.mine)}</div>`:''}
   ${r.alt?`<div class="alt"><h3>${esc(r.alt[0])}</h3><ul>${r.alt[1].map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
   ${r.card?`<p class="src"><a href="https://bobcrta-sys.github.io/Sourdough/starter-card.pdf">Print starter cards</a>: 4 per page, with the feeding basics and a QR code back to this site. Tape one to the jar.</p>`:''}
+  ${r.gallery?`<div class="gallery">${r.gallery.map(k=>pic(k,'')).join('')}</div>`:''}
   ${r.src?`<p class="src">Adapted from <a href="${r.src[1]}">${esc(r.src[0])}</a>.</p>`:''}
  </div></div></section>`}).join('');
 const renderIng=r=>{$('ing-'+r.id).innerHTML=ingHTML(r);if(r.scale)$('n-'+r.id).textContent=r.scale.n;
@@ -457,7 +461,7 @@ function renderFaq(){const raw=norm(faqQ.value).split(' ').filter(w=>w.length>1)
  const hits=help.map(h=>{const t=norm(h[0]+' '+h[1]+' '+h[2]+' '+(h[3]||''));return[h,words.filter(w=>t.includes(w)).length+(words.length&&norm(h[1]).includes(words[0])?.5:0)]})
   .filter(([,n])=>!words.length||n>=1).sort((x,y)=>words.length?y[1]-x[1]:0).map(([h])=>h);
 const cats=words.length?['Best matches']:[...new Set(hits.map(h=>h[0]))];
- $('help').innerHTML=hits.length?cats.map(c=>`<p class="cat">${esc(c)}</p><div class="help">${(words.length?hits:hits.filter(h=>h[0]===c)).map(([,q,a,,bad],i)=>`<details${bad?' class="toss"':''}${words.length&&i<3?' open':''}><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</div>`).join('')
+ $('help').innerHTML=hits.length?cats.map(c=>`<p class="cat">${esc(c)}</p><div class="help">${(words.length?hits:hits.filter(h=>h[0]===c)).map(([,q,a,,bad,ph],i)=>`<details${bad?' class="toss"':''}${words.length&&i<3?' open':''}><summary>${esc(q)}</summary><p>${esc(a)}</p>${ph?pic(ph,'qa-photo',0):''}</details>`).join('')}</div>`).join('')
   :`<p>No matches for “${esc(faqQ.value)}”. Try a simpler word, or use the Ask button at the top.</p>`;
  $('faq-n').textContent=raw.length?`${hits.length} of ${help.length} questions`:`${help.length} questions`}
 faqQ.addEventListener('input',renderFaq);renderFaq();
