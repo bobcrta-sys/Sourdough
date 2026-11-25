@@ -3,6 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Bob's sourdough recipes, a bake planner, step timers and answers to common questions.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Bob's Bakeshop Sourdough">
+<meta property="og:description" content="Recipes, a bake planner, timers and answers. Starter, country loaves, sandwich bread, focaccia and bagels.">
+<meta property="og:url" content="https://bobcrta-sys.github.io/Sourdough/">
+<meta property="og:image" content="https://bobcrta-sys.github.io/Sourdough/og.jpg">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bobcrta-sys.github.io/Sourdough/og.jpg">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#4a2a14">
+<meta name="apple-mobile-web-app-title" content="Sourdough">
 <title>Bob's Bakeshop Sourdough</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap" rel="stylesheet">
@@ -155,7 +169,7 @@ const toast=t=>{const el=$('toast');el.textContent=t;el.hidden=false;clearTimeou
 
 /* ---------- recipes ---------- */
 const R=[
-{id:'starter',tab:'Starter',title:'Keeping your starter alive',sub:'Daily feeding, discarding and fridge breaks.',
+{id:'starter',tab:'Starter',title:'Keeping your starter alive',sub:'Daily feeding, discarding and fridge breaks.',card:1,
  scale:null,ing:()=>[{h:'Each feeding',items:[['Sourdough starter',30],['Water',60],['Unbleached all-purpose flour',60]]}],
  ingNote:'Makes 180 g of starter. On city water, use filtered or bottled water: chlorine can kill a starter. Scale up if you need more to bake with.',
  phases:[['Routine',[
@@ -168,6 +182,24 @@ const R=[
  "I don't recommend keeping it in the fridge all the time, but it's great for short breaks.",
  "After the fridge, it may need 2–3 regular feedings at room temperature before it's strong enough to bake with.",
  "Not active and bubbly? Be patient. Move it somewhere warmer (76–80°F is ideal). If it peaks, feed it. If it's sluggish, give it more time. Sometimes time is all it needs."]]]},
+{id:'newstarter',tab:'New starter?',title:'Got starter from me?',sub:'Welcome to the club. Here\u2019s how to settle in your new jar.',
+ scale:null,ing:()=>[{h:'Each feeding',items:[['Your starter (discard the rest)',30],['Water (filtered if on city water)',60],['Unbleached all-purpose flour',60]]}],
+ ingNote:'You\u2019ll need a kitchen scale and a clean glass jar of about 1 quart. Weigh everything; cups aren\u2019t accurate enough.',
+ phases:[['When you get it home',[
+  "Move it into a clean 1-quart glass jar if it isn't in one. Rest the lid on top; don't seal it.",
+  "Leave it on the counter somewhere warm, 76–80°F is ideal, and give it its first feeding within a day."]],
+ ['The first few days',[
+  "Feed it every 24 hours: keep 30 g, discard the rest, then stir in 60 g water and 60 g flour.",
+  "Put a rubber band or a piece of tape on the jar at the starter's level right after feeding, so you can see how much it grows.",
+  "It may be sluggish for the first 2–3 days while it gets used to your kitchen and flour. That's normal. Keep feeding and keep it warm."]],
+ ['Ready to bake',[
+  "It's ready when it reliably grows 3–4× within a day of feeding and is domed and bubbly.",
+  "Bake with it at its peak or just after it starts to fall. The Bread, Sandwich loaf, Focaccia and Bagels tabs take it from there.",
+  "Use the Plan a bake tab to work out when to feed it so it peaks when you're ready to mix."]],
+ ['Taking a break',[
+  "Not baking for a while? Feed it, let it sit an hour, then put it in the fridge.",
+  "Before baking again, give it 2–3 feedings at room temperature to wake it up."]]],
+ mine:"If it ever gets pink, orange or fuzzy spots, throw it out and text me. I'll give you more.",card:1},
 {id:'country',tab:'Bread (2 loaves)',title:'My two-loaf sourdough',sub:'Mix one day, cold proof overnight, bake the next.',
  scale:{n:2,base:2,min:1,max:12,unit:'loaves'},
  ing:k=>[{h:'Ingredients',items:[['Active starter',250*k],['Water',735*k],['Bread flour (unbleached)',1000*k],['Sea salt',24*k]]}],
@@ -336,6 +368,7 @@ panels.innerHTML=R.map(r=>{let i=0;return `<section class="panel" id="p-${r.id}"
  <div><div class="steps-wrap" id="st-${r.id}">${r.phases.map(([p,l])=>`<p class="phase">${esc(p)}</p><ol class="steps">${l.map(s=>stepHTML(s,r.id,i++)).join('')}</ol>`).join('')}</div>
   ${r.mine?`<div class="mine"><b>My note</b>${esc(r.mine)}</div>`:''}
   ${r.alt?`<div class="alt"><h3>${esc(r.alt[0])}</h3><ul>${r.alt[1].map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
+  ${r.card?`<p class="src"><a href="https://bobcrta-sys.github.io/Sourdough/starter-card.pdf">Print starter cards</a>: 4 per page, with the feeding basics and a QR code back to this site. Tape one to the jar.</p>`:''}
   ${r.src?`<p class="src">Adapted from <a href="${r.src[1]}">${esc(r.src[0])}</a>.</p>`:''}
  </div></div></section>`}).join('');
 const renderIng=r=>{$('ing-'+r.id).innerHTML=ingHTML(r);if(r.scale)$('n-'+r.id).textContent=r.scale.n;
@@ -344,7 +377,7 @@ R.forEach(renderIng);
 const byId=id=>R.find(r=>r.id===id);
 
 /* ---------- tabs + hash ---------- */
-const TABS=[...R.map(r=>[r.id,r.tab]).slice(0,5),['planner','Plan a bake'],['discard','Discard'],['help','Questions']];
+const TABS=[...R.map(r=>[r.id,r.tab]).slice(0,6),['planner','Plan a bake'],['discard','Discard'],['help','Questions']];
 tabsEl.innerHTML=TABS.map(([id,t])=>`<button role="tab" data-tab="${id}" aria-controls="p-${id}" aria-selected="false">${esc(t)}</button>`).join('');
 const show=id=>{if(!$('p-'+id))id='starter';TABS.forEach(([t])=>{$('p-'+t).hidden=t!==id;tabsEl.querySelector(`[data-tab="${t}"]`).setAttribute('aria-selected',t===id)});store.set('tab',id)};
 tabsEl.addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;show(b.dataset.tab);try{history.replaceState(null,'','#'+b.dataset.tab)}catch(x){}});
