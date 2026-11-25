@@ -10,8 +10,9 @@ today = datetime.now(tz).date()
 y = today - timedelta(days=1)
 b_start, b_end = y - timedelta(days=7), y - timedelta(days=1)
 
-def total(start, end):
-    url = f"https://{CODE}.goatcounter.com/counter/TOTAL.json?start={start}&end={end}"
+def total(start=None, end=None):
+    q = f"?start={start}&end={end}" if start else ""
+    url = f"https://{CODE}.goatcounter.com/counter/TOTAL.json{q}"
     req = urllib.request.Request(url, headers={"User-Agent": "bobs-sourdough-stats"})
     try:
         with urllib.request.urlopen(req, timeout=30) as r:
@@ -26,6 +27,7 @@ try:
     yv = total(y, y)
     bt = total(b_start, b_end)
     avg = round(bt / 7, 1)
+    out["all_time"] = total()
     out.update(yesterday=yv, baseline_total=bt, baseline_avg=avg,
                spike=bool(yv >= 10 and yv >= 2 * avg), error=None)
 except Exception as e:
