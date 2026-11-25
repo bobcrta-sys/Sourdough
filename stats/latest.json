@@ -1,5 +1,10 @@
 {
-  "checked_at": "2026-11-25T14:17:05-05:00",
+  "checked_at": "2026-11-25T14:20:09-05:00",
   "date": "2026-11-24",
-  "error": "HTTPError: HTTP Error 403: Forbidden"
+  "all_time": 2,
+  "yesterday": 0,
+  "baseline_total": 0,
+  "baseline_avg": 0.0,
+  "spike": false,
+  "error": null
 }
