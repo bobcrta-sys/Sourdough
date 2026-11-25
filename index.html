@@ -73,7 +73,7 @@ ol.steps li::before{content:counter(s);font-weight:800;font-size:20px;color:var(
 .mine b{display:block;margin-bottom:2px}
 .alt{background:var(--card);border-radius:14px;padding:16px 18px;margin-top:22px}.alt h3{margin-bottom:6px}.alt ul{margin:0;padding-left:20px}
 .src{font-size:14px;color:var(--soft);margin-top:18px}.src a,.help a{color:var(--blue)}
-.help{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px}
+.search{width:100%;max-width:640px;font:16px inherit;font-family:inherit;padding:14px 16px;border:2px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);min-height:48px;margin-bottom:6px}.search:focus{outline:3px solid var(--blue);outline-offset:2px}.cat{font-weight:800;font-size:18px;margin:26px 0 10px}#help .cat:first-child{margin-top:8px}.help{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px}
 .help details{background:var(--card);border-radius:14px;padding:4px 18px;border:1px solid var(--line)}
 .help summary{font-weight:800;font-size:17px;cursor:pointer;padding:14px 0;list-style-position:outside}
 .help details p{margin:0 0 14px}
@@ -109,9 +109,9 @@ ol.steps li::before{content:counter(s);font-weight:800;font-size:20px;color:var(
 <header class="top band"><div class="wrap hero">
   <div>
     <h1>Bob's Bakeshop sourdough, with answers</h1>
-    <p class="lede">My starter routine, my two-loaf recipe, a soft sandwich loaf, focaccia, bagels and ways to use discard. Everything I bake, step by step, with timers and a bake planner.</p>
+    <p class="lede">My starter routine, my two-loaf recipe, a soft sandwich loaf, focaccia, bagels and ways to use discard. Everything I bake, step by step, with timers, a bake planner and answers to common questions.</p>
     <div class="ask">
-      <p style="margin:0 0 12px;font-weight:600">Stuck on a step? Ask the sourdough helper. It answers from these recipes.</p>
+      <p style="margin:0 0 12px;font-weight:600">Stuck on a step? Search the Questions tab below, or ask the sourdough helper. It answers from these recipes.</p>
       <a class="go" href="https://claude.ai/artifact/U6R3NpKgg7Hph6cpC1oLg5" style="display:inline-flex;align-items:center;min-height:48px;text-decoration:none;border-radius:12px">Ask a sourdough question &rarr;</a>
       <p class="note">Opens on claude.ai. You may need to sign in to Claude.</p>
     </div>
@@ -136,8 +136,11 @@ ol.steps li::before{content:counter(s);font-weight:800;font-size:20px;color:var(
   </section>
 
   <section class="panel" id="p-help" role="tabpanel" hidden>
-    <div class="head"><div><h2>Starter rescue</h2><p>Quick answers to the usual worries. Still stuck? Use the Ask button at the top.</p></div></div>
-    <div class="help" id="help"></div>
+    <div class="head"><div><h2>Questions + answers</h2><p>Search the common questions. Still stuck? Use the Ask button at the top.</p></div></div>
+    <label for="faq-q" style="position:absolute;left:-9999px">Search questions</label>
+    <input type="search" id="faq-q" class="search" placeholder="Search: sticky, won't rise, mold, toppings…">
+    <p class="est" id="faq-n"></p>
+    <div id="help"></div>
   </section>
 </div></main>
 <div class="tray" id="tray" aria-live="polite"></div>
@@ -275,15 +278,45 @@ const R=[
 R.forEach(r=>{if(r.scale)r.scale.n=store.get('n-'+r.id,r.scale.n);if(r.pans)r.pan=store.get('pan-'+r.id,r.pan)});
 
 const help=[
- ["Clear or grey liquid on top","That's hooch: alcohol from a hungry starter. Pour it off (or stir it in for a tangier flavour), discard down to 30 g and feed it."],
- ["It isn't rising or bubbling","Be patient and keep it warm, 76–80°F is ideal. Stick to the 30 g starter, 60 g water, 60 g flour feeding and give it time. Fresh from the fridge it can take 2–3 feedings to wake up."],
- ["It smells like nail polish or vinegar","It's hungry. Feed it, and if it keeps happening, feed it more often or keep it a little cooler."],
- ["Pink, orange or fuzzy spots","Throw it out, jar and all contents. Those are signs of mold or bad bacteria and can't be scraped off safely. Start fresh with a clean jar.",true],
- ["Too runny or too stiff","Weigh, don't scoop. With equal weights of water and flour it should be like thick pancake batter. Some flours drink more water than others."],
- ["When is it at its peak?","It has risen 3–4× and the top is domed and bubbly. Once the dome flattens and it starts to slide back down, it's just past peak, which is still great for baking."],
- ["My loaf came out flat","Usually a weak starter or the dough was under- or over-proofed. Bake with the starter at peak, make sure the dough really doubled during bulk, and build plenty of tension when shaping."],
- ["The inside is gummy","Let it cool fully on a rack before slicing. Cutting hot bread squashes the crumb. It can also mean it needed a few more minutes in the oven."],
- ["Going away for a while?","Feed it, let it sit an hour, then put it in the fridge. When you're back, give it 2–3 feedings at room temperature before baking."]
+ ["Starter","Clear or grey liquid on top","That's hooch: alcohol from a hungry starter. Pour it off (or stir it in for a tangier flavour), discard down to 30 g and feed it.","hooch liquid layer water on top dark"],
+ ["Starter","It isn't rising or bubbling","Be patient and keep it warm, 76–80°F is ideal. Stick to the 30 g starter, 60 g water, 60 g flour feeding and give it time. Fresh from the fridge it can take 2–3 feedings to wake up.","sluggish flat dead slow inactive no bubbles"],
+ ["Starter","It smells like nail polish or vinegar","It's hungry. Feed it, and if it keeps happening, feed it more often or keep it a little cooler.","acetone sour smell stinks odor"],
+ ["Starter","Pink, orange or fuzzy spots","Throw it out, jar and all contents. Those are signs of mold or bad bacteria and can't be scraped off safely. Start fresh with a clean jar.","mold mould fuzz red streaks spoiled bad safe",1],
+ ["Starter","Too runny or too stiff","Weigh, don't scoop. With equal weights of water and flour it should be like thick pancake batter. Some flours drink more water than others.","thick thin watery consistency"],
+ ["Starter","When is it at its peak?","It has risen 3–4× and the top is domed and bubbly. Once the dome flattens and it starts to slide back down, it's just past peak, which is still great for baking.","ready peaked when to use float"],
+ ["Starter","Why do I have to discard?","If you keep it all, every feeding needs more and more flour and water. Keeping 30 g before each feeding keeps it small and easy. Use the extra in the Discard recipes.","throw away waste discard"],
+ ["Starter","Can I use tap water?","On city water, use filtered or bottled water. Chlorine can kill or weaken a starter. Well water is usually fine.","chlorine filtered bottled water"],
+ ["Starter","Can I feed it a different flour?","I feed mine unbleached all-purpose. Bread flour works too. A little whole wheat makes it livelier. Avoid bleached flour.","whole wheat rye bread flour bleached"],
+ ["Starter","Can I get more starter to bake with?","Yes. Scale the feeding up, keeping the same 1:2:2 ratio: for example 60 g starter, 120 g water, 120 g flour makes 300 g.","more starter scale up bigger"],
+ ["Starter","Going away for a while?","Feed it, let it sit an hour, then put it in the fridge. When you're back, give it 2–3 feedings at room temperature before baking.","vacation fridge refrigerate store long time"],
+ ["Starter","Should the lid be sealed?","No. I rest the lid on top of a 1-quart glass jar without sealing it, so gas can escape.","jar lid container airtight"],
+ ["Starter","My kitchen is cold. How do I keep it warm?","Try the oven with just the light on, the top of the fridge, or near (not on) a heater. 76–80°F is ideal.","cold winter warm place temperature"],
+ ["Dough","My dough is really sticky","Sourdough is meant to be sticky at first. Use wet hands for folds, a bench scraper, and only a light dusting of flour when shaping. It gets smoother with each set of folds.","sticky wet slack hard to handle"],
+ ["Dough","What's a stretch and fold?","With a wet hand, grab one side of the dough, stretch it up and fold it over the middle. Turn the bowl and repeat on all four sides. That's one set.","stretch fold technique how"],
+ ["Dough","What's a coil fold?","With wet hands, lift the dough from the middle so the ends fold under, turn the bowl a quarter, and repeat. It's gentler than a stretch and fold.","coil fold technique how"],
+ ["Dough","How do I know it has doubled?","It looks about twice as big, domed, wobbly and bubbly at the sides. A straight-sided container with a mark on it makes this easy to see.","doubled bulk rise ready how long"],
+ ["Dough","Bulk is taking forever","Usually the kitchen is cool or the starter wasn't at peak. Move it somewhere warmer and give it time. Watch the dough, not the clock.","slow bulk rise taking long"],
+ ["Dough","Can I bake the two-loaf bread the same day?","My method proofs in the fridge overnight. You can let the shaped loaves proof on the counter until puffy instead, usually a few hours, then bake. The flavour will be milder.","same day no fridge skip overnight"],
+ ["Dough","Can I make one loaf instead of two?","Yes. On the Bread tab, use the − button to scale to 1 loaf and the amounts halve.","half recipe one loaf scale"],
+ ["Shaping + proofing","Why shape twice?","The second shape after a 20-minute rest builds more tension, so the loaf holds its shape and rises up, not out. The dough is less sticky the second time.","shape tension twice preshape"],
+ ["Shaping + proofing","I don't have proofing baskets","A bowl lined with a well-floured kitchen towel works. Rice flour helps stop sticking.","banneton basket bowl towel"],
+ ["Shaping + proofing","Dough sticks to the basket","Flour the basket well, rice flour is best, and make sure the dough is covered in the fridge so it doesn't dry out and glue itself down.","stuck stick basket flour"],
+ ["Shaping + proofing","How long can it stay in the fridge?","I bake the next day. Most dough is fine for 12–24 hours; much longer and it can over-proof and taste very sour.","fridge overnight how long cold proof"],
+ ["Baking","My loaf came out flat","Usually a weak starter or the dough was under- or over-proofed. Bake with the starter at peak, make sure the dough really doubled during bulk, and build plenty of tension when shaping.","flat spread pancake no rise"],
+ ["Baking","The inside is gummy","Let it cool fully on a rack before slicing. Cutting hot bread squashes the crumb. It can also mean it needed a few more minutes in the oven.","gummy wet dense crumb undercooked"],
+ ["Baking","How do I score it?","Use a razor blade or very sharp knife and make one confident cut about ¼ inch deep, at a shallow angle. Do it right after flipping the cold dough onto parchment.","score slash cut lame blade"],
+ ["Baking","No Dutch oven?","Bake on a hot baking sheet or stone and put a pan of boiling water on a lower rack for the first 20 minutes to make steam.","dutch oven pot cast iron no pot steam"],
+ ["Baking","Crust is too dark or burnt on the bottom","Bake at the lower end, 450°F, and put a baking sheet on the rack below the pot to shield the bottom.","burnt dark bottom crust"],
+ ["Baking","How do I know it's done?","A deep golden brown crust and a hollow sound when you tap the bottom. For the sandwich loaf, I go by 195°F inside.","done internal temperature thermometer"],
+ ["Sandwich loaf","Can I use honey instead of maple syrup?","Yes, swap it gram for gram. Sugar works too.","honey sugar maple substitute"],
+ ["Sandwich loaf","The top got too dark","Tent it loosely with foil for the last 10–15 minutes. Butter and milk brown faster than a lean loaf.","dark top brown foil"],
+ ["Focaccia","Which pan size should I pick?","Choose your pan on the Focaccia tab and the amounts change to match. A 9-inch round gives a thick, fluffy focaccia; a 13×18 sheet pan gives a thinner one.","pan size which sheet round"],
+ ["Focaccia","Can I add toppings?","Yes. Press in rosemary, olives, cherry tomatoes or garlic after dimpling, then drizzle with oil. Add cheese for the last few minutes so it doesn't burn.","toppings rosemary olives cheese garlic"],
+ ["Focaccia","It stuck to the pan","Grease well with butter and then olive oil, and don't cold-proof it in the pan.","stuck pan grease oil"],
+ ["Bagels","How much baking soda in the water?","The recipe doesn't give an amount. A spoonful in a wide pot is a good start. More gives a darker, chewier crust.","baking soda boil water amount"],
+ ["Bagels","Can I use other toppings?","Everything seasoning, sesame, poppy seeds, onion or coarse salt all work. Egg wash helps them stick.","everything seasoning sesame toppings"],
+ ["Storage","How do I store the bread?","Cut side down on the board for a day, then in a bread bag. For longer, slice and freeze; toast straight from frozen.","store keep freeze stale"],
+ ["Discard","How long does discard keep?","In a jar in the fridge for about a week. Collect it until you have enough for pancakes or crackers.","discard keep fridge how long"]
 ];
 
 /* ---------- render recipes ---------- */
@@ -311,7 +344,7 @@ R.forEach(renderIng);
 const byId=id=>R.find(r=>r.id===id);
 
 /* ---------- tabs + hash ---------- */
-const TABS=[...R.map(r=>[r.id,r.tab]).slice(0,5),['planner','Plan a bake'],['discard','Discard'],['help','Starter rescue']];
+const TABS=[...R.map(r=>[r.id,r.tab]).slice(0,5),['planner','Plan a bake'],['discard','Discard'],['help','Questions']];
 tabsEl.innerHTML=TABS.map(([id,t])=>`<button role="tab" data-tab="${id}" aria-controls="p-${id}" aria-selected="false">${esc(t)}</button>`).join('');
 const show=id=>{if(!$('p-'+id))id='starter';TABS.forEach(([t])=>{$('p-'+t).hidden=t!==id;tabsEl.querySelector(`[data-tab="${t}"]`).setAttribute('aria-selected',t===id)});store.set('tab',id)};
 tabsEl.addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;show(b.dataset.tab);try{history.replaceState(null,'','#'+b.dataset.tab)}catch(x){}});
@@ -383,7 +416,18 @@ function plan(){const p=plans[$('pl-r').value]||plans.country,end=new Date($('pl
 $('pl-r').addEventListener('change',plan);$('pl-t').addEventListener('input',plan);plan();
 
 /* ---------- help ---------- */
-$('help').innerHTML=help.map(([q,a,bad])=>`<details${bad?' class="toss"':''}><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('');
+const faqQ=$('faq-q');
+const norm=t=>t.toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9°×]+/g,' ');
+const stop=new Set('a an the my i it is its to do does how can what why when should of and or for in on with too be am im dont wont cant doesnt isnt not no'.split(' '));
+const stem=w=>{const x=w.replace(/(ing|ed|es|s|e)$/,'');return x.length>=3?x:w};
+function renderFaq(){const raw=norm(faqQ.value).split(' ').filter(w=>w.length>1);const words=raw.filter(w=>!stop.has(w)).map(stem);
+ const hits=help.map(h=>{const t=norm(h[0]+' '+h[1]+' '+h[2]+' '+(h[3]||''));return[h,words.filter(w=>t.includes(w)).length+(words.length&&norm(h[1]).includes(words[0])?.5:0)]})
+  .filter(([,n])=>!words.length||n>=1).sort((x,y)=>words.length?y[1]-x[1]:0).map(([h])=>h);
+const cats=words.length?['Best matches']:[...new Set(hits.map(h=>h[0]))];
+ $('help').innerHTML=hits.length?cats.map(c=>`<p class="cat">${esc(c)}</p><div class="help">${(words.length?hits:hits.filter(h=>h[0]===c)).map(([,q,a,,bad],i)=>`<details${bad?' class="toss"':''}${words.length&&i<3?' open':''}><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</div>`).join('')
+  :`<p>No matches for “${esc(faqQ.value)}”. Try a simpler word, or use the Ask button at the top.</p>`;
+ $('faq-n').textContent=raw.length?`${hits.length} of ${help.length} questions`:`${help.length} questions`}
+faqQ.addEventListener('input',renderFaq);renderFaq();
 
 
 }
