@@ -1,10 +1,10 @@
 {
-  "checked_at": "2026-11-27T14:30:45-05:00",
-  "date": "2026-11-26",
-  "all_time": 6,
+  "checked_at": "2026-11-28T13:17:38-05:00",
+  "date": "2026-11-27",
+  "all_time": 8,
   "yesterday": 0,
-  "baseline_total": 0,
-  "baseline_avg": 0.0,
+  "baseline_total": 3,
+  "baseline_avg": 0.4,
   "spike": false,
   "error": null
 }
